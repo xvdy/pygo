@@ -9,11 +9,10 @@ var PyFalse = NewPyBool(false)
 var PyBuiltInTypeMap = map[string]PyObject{
 	"True":  PyTrue,
 	"False": PyFalse,
-	"None": PyNil,
+	"None":  PyNil,
 }
 
 var PyBuiltInFuncMap = map[string]func(){}
-
 
 // built in module
 
@@ -24,7 +23,6 @@ var ModuleGopy = Module{
 		},
 	},
 }
-
 
 var ModuleTime = Module{
 	name: "time",
@@ -38,7 +36,6 @@ var ModuleTime = Module{
 		},
 	},
 }
-
 
 var Modules = map[string]Module{
 	"time": ModuleTime,

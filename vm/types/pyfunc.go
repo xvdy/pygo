@@ -57,6 +57,10 @@ func (pf *PyFunc) AsString() *string {
 	return &str
 }
 
+func (pf *PyFunc) GetFuncType() int {
+	return pf.functype
+}
+
 func (pf *PyFunc) log(msg string) {
 	var ident string
 
@@ -71,49 +75,6 @@ func (pf *PyFunc) log(msg string) {
 	}
 
 	log.Println(fmt.Sprintf("[%s] %s", ident, msg))
-}
-
-func (pf *PyFunc) Run(args *PyArgs) PyObject {
-	// Create frame for run
-	//frame := vm.NewPyFrame(1000) // TODO change stack size to a better value?
-
-	//starttime := time.Now()
-	//defer func() {
-	//	if vm.DebugMode {
-	//		pf.log(fmt.Sprintf("Execution took %s.", time.Since(starttime)))
-	//	}
-	//}()
-
-	switch pf.functype {
-	case PyFuncInternal:
-		return pf.mfunc(args)
-	case PyFuncExternal:
-		panic("not implement")
-		//if args != nil {
-		//	for i, value := range args.positional {
-		//		// Iterate reverse! Therefore:
-		//		idx := len(args.positional) - 1 - i
-		//
-		//		name := pf.codeobj.(*PyCode).varnames.(*PyTuple).Items[idx]
-		//		frame.Names[*name.AsString()] = value
-		//		//fmt.Printf("\n  --- Setting %v -> %v...\n", *name.asString(), *value.asString())
-		//	}
-		//	if len(args.keyword) > 0 {
-		//		panic("Not implemented")
-		//	}
-		//}
-		//if vm.DebugMode {
-		//	pf.log("Called")
-		//}
-		//res, err := pf.codeobj.(*vm.PyCode).Eval(frame)
-		//if err != nil {
-		//	pf.codeobj.(*vm.PyCode).runtimeError(err.Error())
-		//}
-		//return res
-	default:
-		panic("unknown func type")
-	}
-	panic("unreachable")
 }
 
 func NewPyFunc(funcType int, module *Module, fn ModuleFunc, name *string, codeobj PyObject) PyObject {
@@ -132,23 +93,4 @@ func NewPyFunc(funcType int, module *Module, fn ModuleFunc, name *string, codeob
 		pf.PyObjInit()
 		return pf
 	}
-}
-
-func NewFuncInternal(module *Module, fn ModuleFunc, name *string) PyObject {
-	return &PyFunc{
-		module:   module,
-		name:     name,
-		functype: PyFuncInternal,
-		mfunc:    fn,
-	}
-}
-
-func NewFuncExternal(codeobj PyObject) PyObject {
-	pf := &PyFunc{
-		codeobj:  codeobj,
-		functype: PyFuncExternal,
-	}
-	pf.PyObjInit()
-
-	return pf
 }

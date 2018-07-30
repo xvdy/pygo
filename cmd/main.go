@@ -6,8 +6,7 @@ import (
 )
 
 func main() {
-	vm, err := vm.NewVM("/Users/xuetang/workspace/byterun/byterun/a.pyc", true)
-
+	vm, err := vm.NewVM("../tests/statement.pyc", true)
 	if err != nil {
 		fmt.Printf("err:", err)
 	}

@@ -1,12 +1,12 @@
 package vm
 
 import (
-	"log"
 	"fmt"
-	"time"
-	"sync"
 	"io/ioutil"
+	"log"
 	"pygo/vm/types"
+	"sync"
+	"time"
 )
 
 type Runtime struct {

@@ -1,10 +1,10 @@
 package vm
 
 import (
-	"pygo/vm/types"
 	"fmt"
-	"time"
 	"io"
+	"pygo/vm/types"
+	"time"
 )
 
 type PyFrame struct {
@@ -15,9 +15,9 @@ type PyFrame struct {
 	funcs    map[string]types.PyFunc
 }
 
-func NewPyFrame(stacksize uint64) *PyFrame {
+func NewPyFrame(stackSize uint64) *PyFrame {
 	return &PyFrame{
-		stack:  NewPyObjStack(stacksize),
+		stack:  NewPyObjStack(stackSize),
 		blocks: NewBlockStack(10000),
 		names:  make(map[string]types.PyObject),
 	}
@@ -46,7 +46,6 @@ func (code *PyCode) eval(frame *PyFrame) (types.PyObject, error) {
 		}
 		frame.position += 1
 		code.vm.runtime.instructions += 1
-
 		// Has opcode arguments?
 		var oparg uint16
 		if opcode >= types.HasArgLimes {
@@ -92,19 +91,19 @@ func (code *PyCode) eval(frame *PyFrame) (types.PyObject, error) {
 			var result types.PyObject
 
 			switch opcode {
-				// todo check type convert
-				case types.INPLACE_MULTIPLY:
-					err, result = op2.(*types.PyInt).Operation(types.OpMultiply, op1, true)
-				case types.BINARY_MULTIPLY:
-					err, result = op2.(*types.PyInt).Operation(types.OpMultiply, op1, false)
-				case types.INPLACE_ADD:
-					err, result = op2.(*types.PyInt).Operation(types.OpAdd, op1, true)
-				case types.BINARY_ADD:
-					err, result = op2.(*types.PyInt).Operation(types.OpAdd, op1, false)
-				case types.BINARY_SUBTRACT:
-					err, result = op2.(*types.PyInt).Operation(types.OpSubtract, op1, false)
-				default:
-					panic("Not implemented")
+			// todo check type convert
+			case types.INPLACE_MULTIPLY:
+				err, result = op2.(*types.PyInt).Operation(types.OpMultiply, op1, true)
+			case types.BINARY_MULTIPLY:
+				err, result = op2.(*types.PyInt).Operation(types.OpMultiply, op1, false)
+			case types.INPLACE_ADD:
+				err, result = op2.(*types.PyInt).Operation(types.OpAdd, op1, true)
+			case types.BINARY_ADD:
+				err, result = op2.(*types.PyInt).Operation(types.OpAdd, op1, false)
+			case types.BINARY_SUBTRACT:
+				err, result = op2.(*types.PyInt).Operation(types.OpSubtract, op1, false)
+			default:
+				panic("Not implemented")
 			}
 
 			if err != nil {
@@ -114,7 +113,6 @@ func (code *PyCode) eval(frame *PyFrame) (types.PyObject, error) {
 			if result == nil {
 				code.runtimeError("Result is nil in math operation")
 			}
-
 			code.Log(fmt.Sprintf("Operation finished: %v [%v] %v = %v", op2_old, opcode, *op1.AsString(), *result.AsString()), true)
 			frame.stack.Push(result)
 		case types.BINARY_SUBSCR:
@@ -209,7 +207,6 @@ func (code *PyCode) eval(frame *PyFrame) (types.PyObject, error) {
 			} else {
 
 			}
-
 			// Workaround: Set in local context
 			stackitem := frame.stack.Pop()
 			if stackitem == nil {
@@ -364,14 +361,15 @@ func (code *PyCode) eval(frame *PyFrame) (types.PyObject, error) {
 			}
 			if fobj.(*types.PyFunc).IsExternal() {
 				panic("not implement")
-				//code.Log(fmt.Sprintf("Code obj argcount: %d", fobj.(*types.PyFunc).codeobj.(*PyCode).argcount), true)
+				//code.Log(fmt.Sprintf("Code obj argcount: %d", fobj.(*types.PyFunc).codeObj.(*PyCode).argcount), true)
 			}
-			result := fobj.(*types.PyFunc).Run(args) // TODO FIX!!
-			frame.stack.Push(result)           // dunno?
+			//result := fobj.(*types.PyFunc).Run(args) // TODO FIX!!
+			result := RunPyFunc(fobj.(*types.PyFunc), args)
+			frame.stack.Push(result) // dunno?
 		case types.MAKE_FUNCTION:
 			code.Log(fmt.Sprintf("Make function (argcount=%d)", oparg), true)
-			codeobj := frame.stack.Pop()
-			fobj := NewPyFuncExternal(codeobj)
+			codeObj := frame.stack.Pop()
+			fobj := NewPyFuncExternal(codeObj)
 			if oparg > 0 {
 				// Parse arguments
 				panic("Not implemented yet")

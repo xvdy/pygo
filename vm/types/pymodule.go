@@ -5,7 +5,6 @@ import (
 	"log"
 )
 
-
 type ModuleFunc func(args *PyArgs) PyObject
 type ModuleDict map[string]ModuleFunc
 
@@ -18,11 +17,10 @@ func (m *Module) inject(pm *PyModule) error {
 	for name, fn := range m.funcs {
 		log.Printf("Injecting %v -> %v\n", name, fn)
 		//pm.attributes[name] = NewPyFuncInternal(m, fn, &name)
-		pm.attributes[name] = NewPyFunc(PyFuncInternal,m, fn, &name,nil)
+		pm.attributes[name] = NewPyFunc(PyFuncInternal, m, fn, &name, nil)
 	}
 	return nil
 }
-
 
 type PyModule struct {
 	PyObjectData
